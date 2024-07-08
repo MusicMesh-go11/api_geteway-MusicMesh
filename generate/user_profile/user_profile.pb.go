@@ -63,8 +63,8 @@ type UserProfile struct {
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	UserID    string `protobuf:"bytes,1,opt,name=userID,proto3" json:"userID,omitempty"`
-	FullName  string `protobuf:"bytes,2,opt,name=fullName,proto3" json:"fullName,omitempty"`
+	UserID    string `protobuf:"bytes,1,opt,name=userID,proto3" json:"user_id,omitempty"`
+	FullName  string `protobuf:"bytes,2,opt,name=fullName,proto3" json:"full_name,omitempty"`
 	Bio       string `protobuf:"bytes,3,opt,name=bio,proto3" json:"bio,omitempty"`
 	Role      string `protobuf:"bytes,4,opt,name=role,proto3" json:"role,omitempty"`
 	Location  string `protobuf:"bytes,5,opt,name=location,proto3" json:"location,omitempty"`

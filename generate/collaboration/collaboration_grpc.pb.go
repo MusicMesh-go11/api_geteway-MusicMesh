@@ -24,7 +24,8 @@ const _ = grpc.SupportPackageIsVersion7
 type CollaborationServiceClient interface {
 	Create(ctx context.Context, in *Collaboration, opts ...grpc.CallOption) (*Void, error)
 	GetById(ctx context.Context, in *CollaborationID, opts ...grpc.CallOption) (*CollaborationRes, error)
-	GetByCompositionId(ctx context.Context, in *CompositionID, opts ...grpc.CallOption) (*CollaborationRes, error)
+	GetByCompositionId(ctx context.Context, in *CompositionID, opts ...grpc.CallOption) (*CollaborationResList, error)
+	Update(ctx context.Context, in *CollaborationRes, opts ...grpc.CallOption) (*Void, error)
 	Delete(ctx context.Context, in *CollaborationID, opts ...grpc.CallOption) (*Void, error)
 }
 
@@ -54,9 +55,18 @@ func (c *collaborationServiceClient) GetById(ctx context.Context, in *Collaborat
 	return out, nil
 }
 
-func (c *collaborationServiceClient) GetByCompositionId(ctx context.Context, in *CompositionID, opts ...grpc.CallOption) (*CollaborationRes, error) {
-	out := new(CollaborationRes)
+func (c *collaborationServiceClient) GetByCompositionId(ctx context.Context, in *CompositionID, opts ...grpc.CallOption) (*CollaborationResList, error) {
+	out := new(CollaborationResList)
 	err := c.cc.Invoke(ctx, "/collaboration.CollaborationService/GetByCompositionId", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *collaborationServiceClient) Update(ctx context.Context, in *CollaborationRes, opts ...grpc.CallOption) (*Void, error) {
+	out := new(Void)
+	err := c.cc.Invoke(ctx, "/collaboration.CollaborationService/Update", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -78,7 +88,8 @@ func (c *collaborationServiceClient) Delete(ctx context.Context, in *Collaborati
 type CollaborationServiceServer interface {
 	Create(context.Context, *Collaboration) (*Void, error)
 	GetById(context.Context, *CollaborationID) (*CollaborationRes, error)
-	GetByCompositionId(context.Context, *CompositionID) (*CollaborationRes, error)
+	GetByCompositionId(context.Context, *CompositionID) (*CollaborationResList, error)
+	Update(context.Context, *CollaborationRes) (*Void, error)
 	Delete(context.Context, *CollaborationID) (*Void, error)
 	mustEmbedUnimplementedCollaborationServiceServer()
 }
@@ -93,8 +104,11 @@ func (UnimplementedCollaborationServiceServer) Create(context.Context, *Collabor
 func (UnimplementedCollaborationServiceServer) GetById(context.Context, *CollaborationID) (*CollaborationRes, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetById not implemented")
 }
-func (UnimplementedCollaborationServiceServer) GetByCompositionId(context.Context, *CompositionID) (*CollaborationRes, error) {
+func (UnimplementedCollaborationServiceServer) GetByCompositionId(context.Context, *CompositionID) (*CollaborationResList, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetByCompositionId not implemented")
+}
+func (UnimplementedCollaborationServiceServer) Update(context.Context, *CollaborationRes) (*Void, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method Update not implemented")
 }
 func (UnimplementedCollaborationServiceServer) Delete(context.Context, *CollaborationID) (*Void, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Delete not implemented")
@@ -166,6 +180,24 @@ func _CollaborationService_GetByCompositionId_Handler(srv interface{}, ctx conte
 	return interceptor(ctx, in, info, handler)
 }
 
+func _CollaborationService_Update_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(CollaborationRes)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(CollaborationServiceServer).Update(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/collaboration.CollaborationService/Update",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(CollaborationServiceServer).Update(ctx, req.(*CollaborationRes))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 func _CollaborationService_Delete_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(CollaborationID)
 	if err := dec(in); err != nil {
@@ -202,6 +234,10 @@ var CollaborationService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "GetByCompositionId",
 			Handler:    _CollaborationService_GetByCompositionId_Handler,
+		},
+		{
+			MethodName: "Update",
+			Handler:    _CollaborationService_Update_Handler,
 		},
 		{
 			MethodName: "Delete",
